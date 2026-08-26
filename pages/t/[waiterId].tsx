@@ -145,7 +145,7 @@ export default function TipPage({ profile, error }: { profile: Profile | null; e
 
           {tipAmount > 0 && (
             <p style={styles.fee}>
-              Waiter receives: <strong>{waiterReceives.toLocaleString()} BIF</strong>
+              {profile.full_name} receives: <strong>{waiterReceives.toLocaleString()} BIF</strong>
               <span style={{ color: '#aaa', fontSize: 12 }}> (after 10% fees)</span>
             </p>
           )}
@@ -160,7 +160,7 @@ export default function TipPage({ profile, error }: { profile: Profile | null; e
             disabled={!tipAmount || tipAmount < 100 || submitting}
             style={{ ...styles.payBtn, opacity: (!tipAmount || tipAmount < 100 || submitting) ? 0.5 : 1 }}
           >
-            {submitting ? 'Redirecting...' : `Pay ${tipAmount ? tipAmount.toLocaleString() + ' BIF' : ''}`}
+            {submitting ? 'Redirecting...' : `Tip ${profile.full_name.split(' ')[0]} ${tipAmount ? '· ' + tipAmount.toLocaleString() + ' BIF' : ''}`}
           </button>
 
           <p style={styles.powered}>Powered by <strong>amTips</strong> · Secured by AfriPay</p>
