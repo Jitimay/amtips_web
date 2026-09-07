@@ -116,7 +116,7 @@ export default function PaymentPage() {
   return (
     <>
       <Head>
-        <title>Pay your tip — amTips</title>
+        <title>Give a tip — amTips</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -124,7 +124,7 @@ export default function PaymentPage() {
         {/* App bar */}
         <div style={s.appBar}>
           <button onClick={() => router.back()} style={s.back}>←</button>
-          <span style={s.appBarTitle}>Pay your tip</span>
+          <span style={s.appBarTitle}>Give a tip</span>
         </div>
 
         <div style={s.body}>
@@ -220,7 +220,7 @@ export default function PaymentPage() {
               {error && <p style={s.error}>{error}</p>}
 
               <button onClick={pay} disabled={submitting} style={{ ...s.payBtn, opacity: submitting ? 0.6 : 1 }}>
-                {submitting ? 'Processing…' : `Pay ${amount.toLocaleString()} ${currency}`}
+                {submitting ? 'Processing…' : `Give tip · ${amount.toLocaleString()} ${currency}`}
               </button>
             </>
           )}
