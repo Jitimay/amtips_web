@@ -14,7 +14,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   try {
-    const afripayRes = await fetch(`${PROXY_URL}?${params.toString()}`);
+    const afripayRes = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+    });
     const text = await afripayRes.text();
     const decoded = JSON.parse(text);
 
