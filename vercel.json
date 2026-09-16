@@ -3,6 +3,10 @@
     {
       "source": "/.well-known/assetlinks.json",
       "destination": "/.well-known/assetlinks.json"
+    },
+    {
+      "source": "/@:username",
+      "destination": "/@:username"
     }
   ]
 }
