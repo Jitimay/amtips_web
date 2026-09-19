@@ -13,7 +13,18 @@ const supabase = createClient(
 );
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const username = context.params?.username as string;
+  const rawUsername = context.params?.username as string;
+
+  if (!rawUsername) {
+    return { redirect: { destination: '/', permanent: false } };
+  }
+
+  // Normalize: strip accents so é→e, ç→c etc., then strip non-alphanumeric
+  // This matches how usernames are stored in the DB (accent-free)
+  const username = rawUsername
+    .normalize('NFD')                    // decompose accents: é → e + combining accent
+    .replace(/[\u0300-\u036f]/g, '')     // strip combining accent characters
+    .replace(/[^a-zA-Z0-9_.]/g, '');    // keep only safe URL chars
 
   if (!username) {
     return { redirect: { destination: '/', permanent: false } };
