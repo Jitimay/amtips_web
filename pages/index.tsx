@@ -71,7 +71,7 @@ export default function Home() {
             <a href="#features" className="nav-link" onClick={() => setMenuOpen(false)}>Features</a>
             <a href="#how" className="nav-link" onClick={() => setMenuOpen(false)}>How it works</a>
             <a href="#screenshots" className="nav-link" onClick={() => setMenuOpen(false)}>App</a>
-            <a href="https://play.google.com/store" className="btn-nav" target="_blank" rel="noreferrer" id="nav-download-btn">
+            <a href="https://drive.google.com/uc?export=download&id=1xLDjQRtmndpRj7QS9Rbb-Yv7kjFpKXE2" className="btn-nav" target="_blank" rel="noreferrer" id="nav-download-btn">
               Download Free
             </a>
           </div>
@@ -101,7 +101,7 @@ export default function Home() {
                 no cash, no app needed on the customer&apos;s side.
               </p>
               <div className="hero-actions">
-                <a href="https://play.google.com/store" className="btn-primary" target="_blank" rel="noreferrer" id="hero-download-btn">
+                <a href="https://drive.google.com/uc?export=download&id=1xLDjQRtmndpRj7QS9Rbb-Yv7kjFpKXE2" className="btn-primary" target="_blank" rel="noreferrer" id="hero-download-btn">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76a1.5 1.5 0 0 0 2.05.56l12.4-7.17-2.93-2.92-11.52 9.53zM20.84 9.74 17.1 7.6 13.83 11l3.6 3.6 3.42-1.97a1.5 1.5 0 0 0-.01-2.89zM1.5.56A1.5 1.5 0 0 0 1 1.72v20.56a1.5 1.5 0 0 0 .5 1.16L13.1 12 1.5.56zM5.23.25 17.1 7.6l-3.27 3.37L2.6.24A1.5 1.5 0 0 0 5.23.25z" /></svg>
                   Get it on Google Play
                 </a>
@@ -251,7 +251,7 @@ export default function Home() {
             <div className="cta-tag">Free to download</div>
             <h2 className="cta-title">Start receiving tips today.</h2>
             <p className="cta-sub">Available on Android. No subscription. No hidden fees.</p>
-            <a href="https://play.google.com/store" className="btn-cta" target="_blank" rel="noreferrer" id="cta-download-btn">
+            <a href="https://drive.google.com/uc?export=download&id=1xLDjQRtmndpRj7QS9Rbb-Yv7kjFpKXE2" className="btn-cta" target="_blank" rel="noreferrer" id="cta-download-btn">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76a1.5 1.5 0 0 0 2.05.56l12.4-7.17-2.93-2.92-11.52 9.53zM20.84 9.74 17.1 7.6 13.83 11l3.6 3.6 3.42-1.97a1.5 1.5 0 0 0-.01-2.89zM1.5.56A1.5 1.5 0 0 0 1 1.72v20.56a1.5 1.5 0 0 0 .5 1.16L13.1 12 1.5.56zM5.23.25 17.1 7.6l-3.27 3.37L2.6.24A1.5 1.5 0 0 0 5.23.25z" /></svg>
               Download on Google Play
             </a>
