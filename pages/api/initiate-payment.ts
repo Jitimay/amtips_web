@@ -15,7 +15,7 @@ const PLATFORM_FEE = 0.06;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { waiterId, amount, currency = 'BIF', phone, paymentMethod, otp } = req.body;
+  const { waiterId, amount, currency = 'BIF', phone, paymentMethod, otp, message } = req.body;
 
   if (!waiterId || !amount || amount < 100 || !phone || !paymentMethod) {
     return res.status(400).json({ status: 'error', message: 'Invalid parameters.' });
@@ -34,6 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       currency,
       status: 'pending',
       is_anonymous: true,
+      ...(message && typeof message === 'string' && message.trim() ? { message: message.trim() } : {}),
     })
     .select('id')
     .single();

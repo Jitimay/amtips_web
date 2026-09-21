@@ -17,7 +17,8 @@ type Step = 'form' | 'awaiting' | 'success' | 'failed';
 
 export default function PaymentPage() {
   const router = useRouter();
-  const { waiterId, amount: amountQ, currency: currencyQ } = router.query;
+  const { waiterId, amount: amountQ, currency: currencyQ, message: messageQ } = router.query;
+  const message = (messageQ as string) || undefined;
 
   const amount = parseInt(amountQ as string) || 0;
   const currency = (currencyQ as string) || 'BIF';
@@ -97,6 +98,7 @@ export default function PaymentPage() {
         phone,
         paymentMethod: selectedId,
         otp: requiresOtp ? otp : undefined,
+        message,
       }),
     });
     const data = await res.json();

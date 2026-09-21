@@ -50,6 +50,7 @@ export default function TipPage({
   const router = useRouter();
   const [amount, setAmount] = useState<number | null>(null);
   const [custom, setCustom] = useState('');
+  const [note, setNote] = useState('');
 
   if (error || !profile) {
     return (
@@ -66,7 +67,7 @@ export default function TipPage({
     if (!tipAmount || tipAmount < 100) return;
     router.push({
       pathname: `/t/${profile!.id}/payment`,
-      query: { amount: tipAmount, currency: 'BIF' },
+      query: { amount: tipAmount, currency: 'BIF', ...(note.trim() ? { message: note.trim() } : {}) },
     });
   }
 
@@ -191,6 +192,15 @@ export default function TipPage({
             onChange={(e) => { setCustom(e.target.value); setAmount(null); }}
             style={s.input}
             min={100}
+          />
+
+          <input
+            type="text"
+            placeholder="Add a note or message (optional)"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            style={{ ...s.input, marginTop: 10 }}
+            maxLength={120}
           />
 
           {tipAmount > 0 && (
