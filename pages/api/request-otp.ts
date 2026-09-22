@@ -2,6 +2,14 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 const PROXY_URL = 'https://ygtgfqitctowlhkqomjw.supabase.co/functions/v1/afripay-proxy';
 
+function normalizePaymentMethod(method: string): string {
+  const m = String(method ?? '').trim().toUpperCase();
+  if (m === 'BANCOBU_ENOTI' || m === 'ENOTI' || m === 'BANCOBU-ENOTI') {
+    return 'BANCOBU';
+  }
+  return m;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).end();
 
@@ -12,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     request: 'transaction',
     action: 'getOTP',
     mobile: phone,
-    payment_method: (paymentMethod as string).toUpperCase(),
+    payment_method: normalizePaymentMethod(paymentMethod),
   });
 
   try {

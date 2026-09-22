@@ -12,6 +12,14 @@ const CALLBACK_URL = 'https://ygtgfqitctowlhkqomjw.supabase.co/functions/v1/afri
 const GATEWAY_FEE = 0.04;
 const PLATFORM_FEE = 0.06;
 
+function normalizePaymentMethod(method: string): string {
+  const m = String(method ?? '').trim().toUpperCase();
+  if (m === 'BANCOBU_ENOTI' || m === 'ENOTI' || m === 'BANCOBU-ENOTI') {
+    return 'BANCOBU';
+  }
+  return m;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).end();
 
@@ -61,7 +69,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const params = new URLSearchParams({
     request: 'payment',
     payment_type: '3',
-    payment_method: paymentMethod.toUpperCase(),
+    payment_method: normalizePaymentMethod(paymentMethod),
     amount: String(amount),
     currency,
     initiator: phone,
