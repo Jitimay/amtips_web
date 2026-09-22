@@ -12,9 +12,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { data } = await supabase
     .from('payments')
-    .select('status')
+    .select('status, transaction_ref, failure_reason')
     .eq('client_token', token)
     .maybeSingle();
 
-  return res.status(200).json({ status: data?.status ?? 'pending' });
+  return res.status(200).json({
+    status: data?.status ?? 'pending',
+    transactionRef: data?.transaction_ref ?? null,
+    failureReason: data?.failure_reason ?? null,
+  });
 }

@@ -9,8 +9,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     request: 'payment_currencies',
     action: 'list_by_currency',
     currency: currency as string,
-    app_id: process.env.AFRIPAY_APP_ID!,
-    app_secret: process.env.AFRIPAY_APP_SECRET!,
   });
 
   try {
@@ -41,6 +39,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         id: m.payment_method_name ?? m.slug ?? m.id ?? '',
         name: m.payment_method_name ?? m.name ?? '',
         icon_url: m.icon ?? null,
+        description:
+          (typeof m.description === 'string' && m.description) ||
+          (typeof m.instructions === 'string' && m.instructions) ||
+          (typeof m.process === 'string' && m.process) ||
+          (typeof m.comment === 'string' && m.comment) ||
+          '',
         requires_otp:
           m.otp_on_collection === 1 ||
           m.otp_on_collection === '1' ||
@@ -50,14 +54,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(200).json({ methods });
   } catch {
-    // Fallback methods
+    // Fallback methods with standard USSD instructions
     return res.status(200).json({
       methods: [
-        { id: 'lumicash', name: 'LumiCash', icon_url: null, requires_otp: true },
-        { id: 'bancobu_enoti', name: 'eNoti', icon_url: null, requires_otp: false },
-        { id: 'ecocash', name: 'EcoCash', icon_url: null, requires_otp: false },
-        { id: 'ibb_mobile_plus', name: 'IBB Mobile Plus', icon_url: null, requires_otp: false },
-        { id: 'ihela', name: 'iHela', icon_url: null, requires_otp: false },
+        {
+          id: 'lumicash',
+          name: 'LumiCash',
+          icon_url: null,
+          requires_otp: true,
+          description:
+            'Composer *163#,\nChoisir 5 Payer Facture,\nChoisir 2 Approuver les transactions,\nChoisir 1 AFRIREGISTER,\nConfirmer la transaction',
+        },
+        {
+          id: 'ecocash',
+          name: 'EcoCash',
+          icon_url: null,
+          requires_otp: false,
+          description:
+            'Composer *150#,\nChoisir 5 Payer Facture,\nChoisir 2 Approuver les transactions,\nConfirmer la transaction',
+        },
+        {
+          id: 'bancobu_enoti',
+          name: 'eNoti',
+          icon_url: null,
+          requires_otp: false,
+          description: 'Entrer votre code secret eNoti pour valider la transaction',
+        },
+        {
+          id: 'ibb_mobile_plus',
+          name: 'IBB Mobile Plus',
+          icon_url: null,
+          requires_otp: false,
+          description: 'Confirmer la transaction sur votre application IBB Mobile Plus',
+        },
+        {
+          id: 'ihela',
+          name: 'iHela',
+          icon_url: null,
+          requires_otp: false,
+          description: 'Confirmer la transaction sur votre compte iHela',
+        },
       ],
     });
   }

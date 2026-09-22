@@ -11,6 +11,7 @@ type Method = {
   name: string;
   icon_url: string | null;
   requires_otp: boolean;
+  description?: string;
 };
 
 type Step = 'form' | 'awaiting' | 'success' | 'failed';
@@ -33,6 +34,8 @@ export default function PaymentPage() {
   const [submitting, setSubmitting] = useState(false);
   const [step, setStep] = useState<Step>('form');
   const [clientToken, setClientToken] = useState<string | null>(null);
+  const [apiMessage, setApiMessage] = useState<string | null>(null);
+  const [failureReason, setFailureReason] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -50,24 +53,40 @@ export default function PaymentPage() {
     if (step !== 'awaiting' || !clientToken) return;
     let tries = 0;
     pollRef.current = setInterval(async () => {
-      const res = await fetch(`/api/payment-status?token=${clientToken}`);
-      const data = await res.json();
-      if (data.status === 'completed') {
-        clearInterval(pollRef.current!);
-        router.replace(`/t/${waiterId}/success?token=${clientToken}`);
-      } else if (data.status === 'failed' || data.status === 'cancelled') {
-        clearInterval(pollRef.current!);
-        setStep('failed');
-      } else if (++tries > 40) {
-        clearInterval(pollRef.current!);
-        router.replace(`/t/${waiterId}/success?token=${clientToken}`);
+      try {
+        const res = await fetch(`/api/payment-status?token=${clientToken}`);
+        const data = await res.json();
+        if (data.status === 'completed') {
+          if (pollRef.current) clearInterval(pollRef.current);
+          router.replace(`/t/${waiterId}/success?token=${clientToken}`);
+        } else if (data.status === 'failed' || data.status === 'cancelled') {
+          if (pollRef.current) clearInterval(pollRef.current);
+          setFailureReason(
+            data.failureReason || 'Payment failed or was cancelled by provider.'
+          );
+          setStep('failed');
+        } else if (++tries > 40) {
+          if (pollRef.current) clearInterval(pollRef.current);
+          setFailureReason(
+            'Payment request timed out after 2 minutes. Please check your mobile money balance.'
+          );
+          setStep('failed');
+        }
+      } catch (_) {
+        // network glitch while polling — keep polling
       }
     }, 3000);
-    return () => clearInterval(pollRef.current!);
-  }, [step, clientToken]);
+
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, [step, clientToken, waiterId, router]);
 
   async function requestOtp() {
-    if (!phone || !selectedId) { setError('Enter your phone number and select a method first.'); return; }
+    if (!phone || !selectedId) {
+      setError('Enter your phone number and select a method first.');
+      return;
+    }
     setRequestingOtp(true);
     setError(null);
     const res = await fetch('/api/request-otp', {
@@ -77,14 +96,27 @@ export default function PaymentPage() {
     });
     const data = await res.json();
     setRequestingOtp(false);
-    if (data.status === 'error') setError(data.message ?? 'OTP request failed.');
-    else setError(null);
+    if (data.status === 'error') {
+      setError(data.message ?? 'OTP request failed.');
+    } else {
+      setError(null);
+      if (data.message) setApiMessage(data.message);
+    }
   }
 
   async function pay() {
-    if (!phone) { setError('Enter your mobile money number.'); return; }
-    if (!selectedId) { setError('Select a payment method.'); return; }
-    if (requiresOtp && !otp) { setError('Enter the OTP sent to your phone.'); return; }
+    if (!phone) {
+      setError('Enter your mobile money number.');
+      return;
+    }
+    if (!selectedId) {
+      setError('Select a payment method.');
+      return;
+    }
+    if (requiresOtp && !otp) {
+      setError('Enter the OTP sent to your phone.');
+      return;
+    }
     setSubmitting(true);
     setError(null);
 
@@ -109,6 +141,11 @@ export default function PaymentPage() {
       return;
     }
 
+    const selectedMethod = methods.find((m) => m.id === selectedId);
+    const displayMsg =
+      data.message || selectedMethod?.description || null;
+
+    setApiMessage(displayMsg);
     setClientToken(data.clientToken);
     setStep('awaiting');
   }
@@ -118,30 +155,97 @@ export default function PaymentPage() {
   return (
     <>
       <Head>
-        <title>Give a tip — amTips</title>
+        <title>Pay your tip — amTips</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
       </Head>
 
       <div style={s.page}>
         {/* App bar */}
         <div style={s.appBar}>
           <button onClick={() => router.back()} style={s.back}>←</button>
-          <span style={s.appBarTitle}>Give a tip</span>
+          <span style={s.appBarTitle}>Pay your tip</span>
         </div>
 
         <div style={s.body}>
           {step === 'awaiting' ? (
             <div style={s.awaitingWrap}>
-              <div style={{ fontSize: 64, marginBottom: 16 }}>📱</div>
-              <h2 style={s.awaitingTitle}>Check your phone!</h2>
+              <div style={s.phoneCircle}>
+                <span style={{ fontSize: 36 }}>📱</span>
+              </div>
+              <h2 style={s.awaitingTitle}>Check your phone! 📱</h2>
               <p style={s.awaitingDesc}>
-                A payment request of <strong>{amount.toLocaleString()} {currency}</strong> was sent
-                to your mobile money account. Please confirm it on your phone.
+                A payment request was sent to your mobile money account.
               </p>
+
+              {apiMessage && (
+                <div style={s.stepsCard}>
+                  {apiMessage.split('\n').filter(Boolean).map((line, i) => (
+                    <p key={i} style={s.stepLine}>
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              )}
+
               <div style={s.spinner} />
-              <button onClick={() => { clearInterval(pollRef.current!); router.back(); }} style={s.cancelBtn}>
-                Cancel
+              <p style={s.waitingText}>Waiting for confirmation...</p>
+              <button
+                onClick={() => {
+                  if (pollRef.current) clearInterval(pollRef.current);
+                  setStep('form');
+                }}
+                style={s.cancelBtnRed}
+              >
+                Cancel payment
               </button>
+            </div>
+          ) : step === 'failed' ? (
+            <div style={s.awaitingWrap}>
+              <div style={{ fontSize: 56, marginBottom: 16 }}>❌</div>
+              <h2 style={s.awaitingTitle}>Payment failed</h2>
+              <p style={s.awaitingDesc}>
+                Your payment could not be completed.
+              </p>
+
+              <div style={s.errorCard}>
+                <p style={s.errorCardTitle}>Provider Response / Reason:</p>
+                <p style={s.errorCardText}>
+                  {failureReason || apiMessage || 'Transaction failed or was cancelled by provider.'}
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', gap: 12, width: '100%', marginTop: 24 }}>
+                <button
+                  onClick={() => {
+                    setError(null);
+                    setStep('form');
+                  }}
+                  style={{ ...s.payBtn, flex: 1, marginTop: 0 }}
+                >
+                  Try again
+                </button>
+                <button
+                  onClick={() => router.back()}
+                  style={{
+                    background: 'transparent',
+                    border: '1.5px solid rgba(255,255,255,0.2)',
+                    borderRadius: 16,
+                    color: '#fff',
+                    flex: 1,
+                    fontSize: 16,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Back
+                </button>
+              </div>
             </div>
           ) : (
             <>
@@ -180,7 +284,9 @@ export default function PaymentPage() {
                         <span style={s.methodInitial}>{m.name[0]?.toUpperCase()}</span>
                       )}
                     </div>
-                    <span style={s.methodName}>{m.name.toUpperCase()}</span>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <span style={s.methodName}>{m.name.toUpperCase()}</span>
+                    </div>
                     {selectedId === m.id && <span style={{ color: PRIMARY, fontSize: 20 }}>✓</span>}
                   </button>
                 ))
@@ -276,16 +382,100 @@ const s: Record<string, React.CSSProperties> = {
     color: '#fff', fontSize: 17, fontWeight: 700, border: 'none', cursor: 'pointer',
     marginTop: 8,
   },
-  // Awaiting
-  awaitingWrap: { display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 40 },
-  awaitingTitle: { fontSize: 22, fontWeight: 700, color: '#1A1033', marginBottom: 12 },
-  awaitingDesc: { fontSize: 14, color: '#666', textAlign: 'center', lineHeight: 1.6, marginBottom: 28 },
-  spinner: {
-    width: 36, height: 36, border: `3px solid rgba(123,95,238,0.2)`,
-    borderTop: `3px solid ${PRIMARY}`, borderRadius: '50%',
-    animation: 'spin 0.8s linear infinite', marginBottom: 28,
+  // Awaiting & Failed cards
+  awaitingWrap: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    background: '#1C1830',
+    borderRadius: 24,
+    padding: '36px 24px',
+    color: '#fff',
+    boxShadow: '0 8px 32px rgba(0,0,0,0.24)',
+    margin: '12px 0',
   },
-  cancelBtn: {
-    background: 'none', border: 'none', color: '#888', fontSize: 14, cursor: 'pointer',
+  phoneCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: '50%',
+    background: 'rgba(123, 95, 238, 0.2)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  awaitingTitle: {
+    fontSize: 22,
+    fontWeight: 800,
+    color: '#FFFFFF',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  awaitingDesc: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.7)',
+    textAlign: 'center',
+    lineHeight: 1.5,
+    marginBottom: 20,
+  },
+  stepsCard: {
+    width: '100%',
+    background: 'rgba(123, 95, 238, 0.15)',
+    border: '1px solid rgba(123, 95, 238, 0.35)',
+    borderRadius: 16,
+    padding: '16px 20px',
+    marginBottom: 24,
+    boxSizing: 'border-box',
+  },
+  stepLine: {
+    margin: '4px 0',
+    fontSize: 14,
+    fontWeight: 500,
+    color: '#F1F0F8',
+    lineHeight: 1.6,
+  },
+  errorCard: {
+    width: '100%',
+    background: 'rgba(239, 68, 68, 0.15)',
+    border: '1px solid rgba(239, 68, 68, 0.35)',
+    borderRadius: 16,
+    padding: '16px 20px',
+    marginBottom: 20,
+    boxSizing: 'border-box',
+  },
+  errorCardTitle: {
+    margin: '0 0 6px',
+    fontSize: 13,
+    fontWeight: 700,
+    color: '#FCA5A5',
+  },
+  errorCardText: {
+    margin: 0,
+    fontSize: 14,
+    fontWeight: 500,
+    color: '#FEE2E2',
+    lineHeight: 1.5,
+  },
+  spinner: {
+    width: 32,
+    height: 32,
+    border: '3px solid rgba(123, 95, 238, 0.25)',
+    borderTop: '3px solid #7B5FEE',
+    borderRadius: '50%',
+    animation: 'spin 0.8s linear infinite',
+    marginBottom: 12,
+  },
+  waitingText: {
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.6)',
+    marginBottom: 24,
+  },
+  cancelBtnRed: {
+    background: 'none',
+    border: 'none',
+    color: '#EF4444',
+    fontSize: 15,
+    fontWeight: 600,
+    cursor: 'pointer',
   },
 };

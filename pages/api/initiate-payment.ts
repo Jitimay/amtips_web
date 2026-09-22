@@ -61,8 +61,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const params = new URLSearchParams({
     request: 'payment',
     payment_type: '3',
-    app_id: process.env.AFRIPAY_APP_ID!,
-    app_secret: process.env.AFRIPAY_APP_SECRET!,
     payment_method: paymentMethod.toUpperCase(),
     amount: String(amount),
     currency,
@@ -84,8 +82,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try { json = JSON.parse(text); } catch { /* non-JSON response */ }
 
   if (json.status === 'error' || json.status === 'failed') {
-    return res.status(200).json({ status: 'error', message: json.message ?? 'Payment initiation failed.' });
+    return res.status(200).json({
+      status: 'error',
+      message: (typeof json.message === 'string' && json.message) || (typeof json.response === 'string' && json.response) || 'Payment initiation failed.',
+      apiResponse: json,
+    });
   }
 
-  return res.status(200).json({ status: 'success', clientToken });
+  const responseMessage = (typeof json.message === 'string' && json.message) || (typeof json.response === 'string' && json.response) || null;
+
+  return res.status(200).json({
+    status: 'success',
+    clientToken,
+    message: responseMessage,
+    apiResponse: json,
+  });
 }
