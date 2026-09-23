@@ -74,7 +74,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             'Composer *150#,\nChoisir 5 Payer Facture,\nChoisir 2 Approuver les transactions,\nConfirmer la transaction',
         },
         {
-          id: 'bancobu_enoti',
+          id: 'enoti',
           name: 'eNoti',
           icon_url: null,
           requires_otp: false,

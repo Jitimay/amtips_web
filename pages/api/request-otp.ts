@@ -4,8 +4,8 @@ const PROXY_URL = 'https://ygtgfqitctowlhkqomjw.supabase.co/functions/v1/afripay
 
 function normalizePaymentMethod(method: string): string {
   const m = String(method ?? '').trim().toUpperCase();
-  if (m === 'BANCOBU_ENOTI' || m === 'ENOTI' || m === 'BANCOBU-ENOTI') {
-    return 'BANCOBU';
+  if (m === 'BANCOBU_ENOTI' || m === 'BANCOBU' || m === 'ENOTI' || m === 'BANCOBU-ENOTI') {
+    return 'ENOTI';
   }
   return m;
 }
