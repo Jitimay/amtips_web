@@ -89,15 +89,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   let json: Record<string, unknown> = {};
   try { json = JSON.parse(text); } catch { /* non-JSON response */ }
 
+  // Helper: strip HTML tags and normalize newlines from AfriPay messages
+  function cleanMsg(raw: unknown): string | null {
+    if (typeof raw !== 'string' || !raw) return null;
+    return raw
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<[^>]+>/g, '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n')
+      .trim() || null;
+  }
+
   if (json.status === 'error' || json.status === 'failed') {
     return res.status(200).json({
       status: 'error',
-      message: (typeof json.message === 'string' && json.message) || (typeof json.response === 'string' && json.response) || 'Payment initiation failed.',
+      message: cleanMsg(json.message) || cleanMsg(json.response) || 'Payment initiation failed.',
       apiResponse: json,
     });
   }
 
-  const responseMessage = (typeof json.message === 'string' && json.message) || (typeof json.response === 'string' && json.response) || null;
+  const responseMessage = cleanMsg(json.message) || cleanMsg(json.response) || null;
 
   return res.status(200).json({
     status: 'success',
