@@ -183,15 +183,22 @@ export default function PaymentPage() {
                 A payment request was sent to your mobile money account.
               </p>
 
-              {apiMessage && (
-                <div style={s.stepsCard}>
-                  {apiMessage.split('\n').filter(Boolean).map((line, i) => (
-                    <p key={i} style={s.stepLine}>
-                      {line}
-                    </p>
-                  ))}
-                </div>
-              )}
+              {apiMessage && (() => {
+                // Strip HTML tags (e.g. <br>, <br/>) and split into clean lines
+                const cleanMsg = apiMessage
+                  .replace(/<br\s*\/?>/gi, '\n')   // <br> → newline
+                  .replace(/<[^>]+>/g, '')           // strip any other HTML tags
+                  .replace(/\r\n/g, '\n')            // normalize Windows newlines
+                  .replace(/\r/g, '\n');             // normalize old Mac newlines
+                const lines = cleanMsg.split('\n').map(l => l.trim()).filter(Boolean);
+                return (
+                  <div style={s.stepsCard}>
+                    {lines.map((line, i) => (
+                      <p key={i} style={s.stepLine}>{line}</p>
+                    ))}
+                  </div>
+                );
+              })()}
 
               <div style={s.spinner} />
               <p style={s.waitingText}>Waiting for confirmation...</p>
