@@ -12,6 +12,20 @@ const CALLBACK_URL = 'https://ygtgfqitctowlhkqomjw.supabase.co/functions/v1/afri
 const GATEWAY_FEE = 0.04;
 const PLATFORM_FEE = 0.06;
 
+// Basic in-memory rate limiter (per instance)
+const rateLimit = new Map<string, { count: number; expiresAt: number }>();
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const record = rateLimit.get(ip);
+  if (!record || record.expiresAt < now) {
+    rateLimit.set(ip, { count: 1, expiresAt: now + 60000 }); // 1 min window
+    return true;
+  }
+  if (record.count >= 5) return false; // Max 5 requests per minute
+  record.count += 1;
+  return true;
+}
+
 function normalizePaymentMethod(method: string): string {
   const m = String(method ?? '').trim().toUpperCase();
   if (m === 'BANCOBU_ENOTI' || m === 'BANCOBU' || m === 'ENOTI' || m === 'BANCOBU-ENOTI') {
@@ -22,6 +36,11 @@ function normalizePaymentMethod(method: string): string {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).end();
+  
+  const ip = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || 'unknown';
+  if (!checkRateLimit(ip)) {
+    return res.status(429).json({ status: 'error', message: 'Too many requests. Please wait a minute.' });
+  }
 
   const { waiterId, amount, currency = 'BIF', phone, paymentMethod, otp, message } = req.body;
 
