@@ -8,9 +8,9 @@ type PaymentInfo = {
   tip_amount: number;
   customer_pays: number;
   gateway_fee: number;
+  platform_fee: number;
   currency: string;
   transaction_ref: string | null;
-  failure_reason: string | null;
   created_at: string;
   waiter_name: string;
   waiter_username: string;
@@ -35,7 +35,7 @@ export default function SuccessPage() {
 
     const { data: payment } = await supabase
       .from('payments')
-      .select('status, tip_amount, customer_pays, gateway_fee, currency, transaction_ref, failure_reason, created_at, tip_id')
+      .select('status, tip_amount, customer_pays, gateway_fee, platform_fee, currency, transaction_ref, created_at, tip_id')
       .eq('client_token', clientToken)
       .maybeSingle();
 
@@ -107,11 +107,16 @@ export default function SuccessPage() {
     // Polling fallback every 3s for up to 2 min
     let tries = 0;
     const interval = setInterval(async () => {
-      const data = await fetchPaymentInfo(clientToken);
+    const { data } = await supabase
+        .from('payments')
+        .select('status, transaction_ref')
+        .eq('client_token', token)
+        .maybeSingle();
+
       if (data) {
-        setInfo(data);
-        if (data.status === 'completed') { setStatus('completed'); cleanup(); }
-        else if (data.status === 'failed' || data.status === 'cancelled') { setStatus('failed'); cleanup(); }
+        setInfo(prev => prev ? { ...prev, status: data.status, transaction_ref: data.transaction_ref ?? prev.transaction_ref } : prev);
+        if (data.status === 'completed') setStatus('completed');
+        else if (data.status === 'failed' || data.status === 'cancelled') setStatus('failed');
       }
       if (++tries > 40) { setStatus('pending'); cleanup(); }
     }, 3000);
@@ -296,7 +301,7 @@ export default function SuccessPage() {
             <div style={s.errorCard}>
               <p style={s.errorTitle}>Reason</p>
               <p style={s.errorText}>
-                {info?.failure_reason || 'Transaction was cancelled or rejected by provider.'}
+                {'Transaction was cancelled or rejected by provider.'}
               </p>
             </div>
             <button onClick={() => router.back()} style={s.downloadBtn}>

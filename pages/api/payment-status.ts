@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { data, error } = await supabase
     .from('payments')
-    .select('status, transaction_ref, failure_reason')
+    .select('status, transaction_ref')
     .eq('client_token', token)
     .maybeSingle();
 
@@ -35,6 +35,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   return res.status(200).json({
     status: data?.status ?? 'pending',
     transactionRef: data?.transaction_ref ?? null,
-    failureReason: data?.failure_reason ?? null,
   });
 }
