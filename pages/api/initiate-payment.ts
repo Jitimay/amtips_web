@@ -2,10 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+
 
 const PROXY_URL = 'https://ygtgfqitctowlhkqomjw.supabase.co/functions/v1/afripay-proxy';
 const CALLBACK_URL = 'https://ygtgfqitctowlhkqomjw.supabase.co/functions/v1/afripay-callback';
@@ -41,6 +38,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!checkRateLimit(ip)) {
     return res.status(429).json({ status: 'error', message: 'Too many requests. Please wait a minute.' });
   }
+
+  const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!SUPABASE_URL || !SERVICE_KEY) {
+    console.error('[initiate-payment] Missing Supabase env vars');
+    return res.status(500).json({ status: 'error', message: 'Server misconfiguration.' });
+  }
+  const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
   const { waiterId, amount, currency = 'BIF', phone, paymentMethod, otp, message } = req.body;
 
