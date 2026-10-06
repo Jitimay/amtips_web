@@ -222,6 +222,32 @@ export default function TipPage({
             Continue
           </button>
 
+          {/* App download banner for tippers and service workers */}
+          <div style={s.appCard}>
+            <div style={s.appRow}>
+              <div style={s.appLogoBox}>
+                <img src="/logo.png" alt="amTips logo" style={s.appLogo} />
+              </div>
+              <div style={s.appInfo}>
+                <p style={s.appTitle}>Get the amTips App</p>
+                <p style={s.appDesc}>
+                  Are you a waiter or service worker? Download amTips to receive digital tips directly!
+                </p>
+              </div>
+            </div>
+            <a
+              href="https://play.google.com/store/apps/details?id=app.amtips.official"
+              target="_blank"
+              rel="noreferrer"
+              style={s.appDownloadBtn}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: 8 }}>
+                <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L14.81,13.12L14.81,10.88L16.81,8.88L20.57,11.05C21.14,11.37 21.14,12.63 20.57,12.95L16.81,15.12M4.5,2.71L13.12,11.33L14.24,10.21L4.5,2.71Z" />
+              </svg>
+              Download on Google Play
+            </a>
+          </div>
+
           <p style={s.powered}>Powered by <strong>amTips</strong></p>
         </div>
       </div>
@@ -335,4 +361,64 @@ const s: Record<string, React.CSSProperties> = {
     marginBottom: 16,
   },
   powered: { textAlign: 'center', fontSize: 11, color: '#bbb', margin: 0 },
+  // App Promo Card
+  appCard: {
+    background: '#ffffff',
+    borderRadius: 16,
+    padding: 16,
+    marginTop: 24,
+    marginBottom: 20,
+    border: '1px solid #e8e8f0',
+    boxShadow: '0 4px 16px rgba(123, 95, 238, 0.08)',
+  },
+  appRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  appLogoBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    background: '#f0ecff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  appLogo: {
+    width: 28,
+    height: 28,
+    objectFit: 'contain',
+  },
+  appInfo: {
+    flex: 1,
+  },
+  appTitle: {
+    margin: 0,
+    fontSize: 14,
+    fontWeight: 700,
+    color: '#1A1033',
+  },
+  appDesc: {
+    margin: '3px 0 0',
+    fontSize: 12,
+    color: '#666',
+    lineHeight: 1.35,
+  },
+  appDownloadBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    padding: '11px 0',
+    borderRadius: 12,
+    background: '#1A1033',
+    color: '#ffffff',
+    textDecoration: 'none',
+    fontSize: 13,
+    fontWeight: 600,
+    boxSizing: 'border-box',
+  },
 };

@@ -287,6 +287,32 @@ export default function SuccessPage() {
                 Done
               </button>
             </div>
+
+            {/* Download app promo card */}
+            <div className="no-print" style={s.appPromoCard}>
+              <div style={s.appPromoRow}>
+                <div style={s.appLogoBox}>
+                  <img src="/logo.png" alt="amTips logo" style={s.appLogo} />
+                </div>
+                <div style={{ textAlign: 'left', flex: 1 }}>
+                  <p style={s.appPromoTitle}>Get the amTips App</p>
+                  <p style={s.appPromoDesc}>
+                    Service worker? Receive digital tips directly with your own QR code!
+                  </p>
+                </div>
+              </div>
+              <a
+                href="https://play.google.com/store/apps/details?id=app.amtips.official"
+                target="_blank"
+                rel="noreferrer"
+                style={s.playBtn}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: 8 }}>
+                  <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L14.81,13.12L14.81,10.88L16.81,8.88L20.57,11.05C21.14,11.37 21.14,12.63 20.57,12.95L16.81,15.12M4.5,2.71L13.12,11.33L14.24,10.21L4.5,2.71Z" />
+                </svg>
+                Download on Google Play
+              </a>
+            </div>
           </div>
         )}
 
@@ -452,5 +478,63 @@ const s: Record<string, React.CSSProperties> = {
     padding: '10px 16px',
     fontSize: 13,
     marginTop: 12,
+  },
+
+  // App Promo Card
+  appPromoCard: {
+    width: '100%',
+    marginTop: 20,
+    background: 'rgba(255,255,255,0.06)',
+    borderRadius: 16,
+    padding: 16,
+    border: '1px solid rgba(255,255,255,0.12)',
+    boxSizing: 'border-box',
+  },
+  appPromoRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  appLogoBox: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    background: 'rgba(123, 95, 238, 0.25)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  appLogo: {
+    width: 26,
+    height: 26,
+    objectFit: 'contain',
+  },
+  appPromoTitle: {
+    margin: 0,
+    fontSize: 14,
+    fontWeight: 700,
+    color: '#ffffff',
+  },
+  appPromoDesc: {
+    margin: '3px 0 0',
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.7)',
+    lineHeight: 1.35,
+  },
+  playBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    padding: '12px 0',
+    borderRadius: 12,
+    background: '#7B5FEE',
+    color: '#ffffff',
+    textDecoration: 'none',
+    fontSize: 14,
+    fontWeight: 700,
+    boxSizing: 'border-box',
   },
 };
