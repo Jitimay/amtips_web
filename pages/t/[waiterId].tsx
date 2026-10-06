@@ -230,9 +230,6 @@ export default function TipPage({
               </div>
               <div style={s.appInfo}>
                 <p style={s.appTitle}>Get the amTips App</p>
-                <p style={s.appDesc}>
-                  Are you a waiter or service worker? Download amTips to receive digital tips directly!
-                </p>
               </div>
             </div>
             <a

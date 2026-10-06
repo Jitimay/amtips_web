@@ -296,9 +296,6 @@ export default function SuccessPage() {
                 </div>
                 <div style={{ textAlign: 'left', flex: 1 }}>
                   <p style={s.appPromoTitle}>Get the amTips App</p>
-                  <p style={s.appPromoDesc}>
-                    Service worker? Receive digital tips directly with your own QR code!
-                  </p>
                 </div>
               </div>
               <a
