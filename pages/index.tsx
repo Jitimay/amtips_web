@@ -119,6 +119,7 @@ export default function Home() {
 
         {/* FEATURES */}
         <section id="features" className={`section ${featReveal.visible ? 'revealed' : ''}`} ref={featReveal.ref as any}>
+          <div className="section-inner">
           <div className="section-divider" />
           <div className="section-header">
             <p className="section-tag">Features</p>
@@ -141,10 +142,12 @@ export default function Home() {
               </div>
             ))}
           </div>
+          </div>
         </section>
 
         {/* HOW IT WORKS */}
         <section id="how" className={`section how-section ${howReveal.visible ? 'revealed' : ''}`} ref={howReveal.ref as any}>
+          <div className="section-inner">
           <div className="section-divider" />
           <div className="section-header">
             <p className="section-tag">Process</p>
@@ -165,10 +168,12 @@ export default function Home() {
               </div>
             ))}
           </div>
+          </div>
         </section>
 
         {/* SCREENSHOTS */}
         <section id="screenshots" className={`section ${ssReveal.visible ? 'revealed' : ''}`} ref={ssReveal.ref as any}>
+          <div className="section-inner">
           <div className="section-divider" />
           <div className="section-header">
             <p className="section-tag">The App</p>
@@ -191,31 +196,36 @@ export default function Home() {
               </div>
             ))}
           </div>
+          </div>
         </section>
 
         {/* TESTIMONIAL */}
         <section className="trust">
-          <div className="section-divider" />
-          <blockquote className="quote">
-            &ldquo;amTips changed how I receive tips. No more fumbling for change — my customers just scan and it&apos;s done.&rdquo;
-          </blockquote>
-          <div className="quote-author">
-            <div className="quote-avatar">JK</div>
-            <div>
-              <div className="quote-name">Jean-Klébert M.</div>
-              <div className="quote-role">Waiter, Bujumbura</div>
+          <div className="trust-inner">
+            <div className="section-divider" />
+            <blockquote className="quote">
+              &ldquo;amTips changed how I receive tips. No more fumbling for change — my customers just scan and it&apos;s done.&rdquo;
+            </blockquote>
+            <div className="quote-author">
+              <div className="quote-avatar">JK</div>
+              <div>
+                <div className="quote-name">Jean-Klébert M.</div>
+                <div className="quote-role">Waiter, Bujumbura</div>
+              </div>
             </div>
           </div>
         </section>
 
         {/* CTA */}
         <section className="cta">
-          <div className="section-divider" />
-          <h2 className="cta-title">Start receiving tips <span className="underline-accent">today.</span></h2>
-          <p className="cta-sub">Available on Android. No subscription. No hidden fees.</p>
-          <a href="https://play.google.com/store/apps/details?id=app.amtips.official" className="btn-primary" target="_blank" rel="noreferrer">
-            Download on Google Play
-          </a>
+          <div className="cta-inner">
+            <div className="section-divider" />
+            <h2 className="cta-title">Start receiving tips <span className="underline-accent">today.</span></h2>
+            <p className="cta-sub">Available on Android. No subscription. No hidden fees.</p>
+            <a href="https://play.google.com/store/apps/details?id=app.amtips.official" className="btn-primary" target="_blank" rel="noreferrer">
+              Download on Google Play
+            </a>
+          </div>
         </section>
 
         {/* FOOTER */}
@@ -309,9 +319,10 @@ export default function Home() {
         .stat-label { font-size: 13px; color: var(--text3); font-weight: 500; margin-top: 4px; }
 
         /* SECTIONS */
-        .section { padding: 80px 60px; max-width: 1200px; margin: 0 auto; opacity: 0; transform: translateY(20px); transition: opacity 0.7s, transform 0.7s; }
+        .section { padding: 80px 60px; opacity: 0; transform: translateY(20px); transition: opacity 0.7s, transform 0.7s; }
         .section.revealed { opacity: 1; transform: none; }
-        .section-divider { width: 100%; height: 3px; background: var(--blue); border-radius: 2px; margin-bottom: 48px; opacity: 0.7; }
+        .section-inner { max-width: 1100px; margin: 0 auto; }
+        .section-divider { max-width: 1100px; margin: 0 auto 48px; height: 3px; background: var(--blue); border-radius: 2px; opacity: 0.7; }
         .section-header { margin-bottom: 56px; }
         .section-tag { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text3); margin-bottom: 12px; }
         .section-title { font-size: clamp(28px, 4vw, 42px); font-weight: 800; letter-spacing: -1px; line-height: 1.2; margin-bottom: 14px; color: var(--dark); }
@@ -322,10 +333,10 @@ export default function Home() {
         .underline-accent::after { content: ''; position: absolute; left: -2px; right: -2px; bottom: -3px; height: 10px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='10'%3E%3Cpath d='M2 7 Q50 2 100 6 Q150 10 198 5' stroke='%233B4EF0' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x center / auto 100%; opacity: 0.6; }
 
         /* FEATURES */
-        .feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .feat-card { background: var(--gray); border-radius: var(--radius); padding: 28px; transition: transform 0.2s; }
         .feat-card:hover { transform: translateY(-3px); }
-        .feat-icon { font-size: 28px; display: block; margin-bottom: 14px; }
+        .feat-icon { font-size: 28px; display: block; margin-bottom: 14px; line-height: 1; }
         .feat-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--dark); }
         .feat-desc { font-size: 14px; color: var(--text2); line-height: 1.65; }
 
@@ -346,21 +357,23 @@ export default function Home() {
         .ss-desc { font-size: 12px; color: var(--text3); }
 
         /* TESTIMONIAL */
-        .trust { padding: 80px 60px; max-width: 700px; margin: 0 auto; text-align: center; }
+        .trust { padding: 80px 60px; }
+        .trust-inner { max-width: 700px; margin: 0 auto; text-align: center; }
         .quote { font-size: clamp(18px, 2.5vw, 22px); font-weight: 600; color: var(--dark); line-height: 1.65; font-style: italic; margin-bottom: 28px; }
         .quote-author { display: inline-flex; align-items: center; gap: 12px; }
-        .quote-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
+        .quote-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; }
         .quote-name { font-weight: 700; font-size: 14px; text-align: left; }
         .quote-role { font-size: 12px; color: var(--text3); text-align: left; }
 
         /* CTA */
-        .cta { padding: 80px 60px; max-width: 700px; margin: 0 auto; text-align: center; }
+        .cta { padding: 80px 60px; }
+        .cta-inner { max-width: 700px; margin: 0 auto; text-align: center; }
         .cta-title { font-size: clamp(30px, 4vw, 46px); font-weight: 900; letter-spacing: -1px; margin-bottom: 14px; color: var(--dark); }
         .cta-sub { font-size: 16px; color: var(--text2); margin-bottom: 36px; }
 
         /* FOOTER */
         .footer { padding: 48px 60px 32px; border-top: 1px solid var(--gray2); }
-        .footer-divider { width: 100%; height: 3px; background: var(--blue); border-radius: 2px; margin-bottom: 40px; opacity: 0.7; }
+        .footer-divider { max-width: 1100px; margin: 0 auto 40px; height: 3px; background: var(--blue); border-radius: 2px; opacity: 0.7; }
         .footer-inner { display: flex; justify-content: space-between; gap: 40px; max-width: 1100px; margin: 0 auto 40px; flex-wrap: wrap; }
         .footer-brand { max-width: 260px; }
         .footer-tagline { font-size: 13px; color: var(--text3); line-height: 1.7; margin-top: 12px; }
@@ -384,6 +397,7 @@ export default function Home() {
           .stats { padding: 40px 24px; }
           .stats-inner { grid-template-columns: repeat(2, 1fr); }
           .section { padding: 60px 24px; }
+          .feat-grid { grid-template-columns: 1fr 1fr; }
           .trust, .cta { padding: 60px 24px; }
           .footer { padding: 40px 24px 24px; }
           .footer-inner { flex-direction: column; }
