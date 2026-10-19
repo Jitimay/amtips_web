@@ -16,6 +16,67 @@ type Method = {
 
 type Step = 'form' | 'awaiting' | 'success' | 'failed';
 
+function parseAfriPaySteps(raw?: string | null) {
+  if (!raw) return [];
+  const cleanMsg = raw
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n');
+  const rawLines = cleanMsg.split('\n').map((l) => l.trim()).filter(Boolean);
+
+  const steps: { number: number; emoji: string; text: string }[] = [];
+  let count = 1;
+  for (const line of rawLines) {
+    const lower = line.toLowerCase();
+    if (
+      lower.includes('has been created') ||
+      lower.includes('demande de paiement a été') ||
+      lower.includes('payment request has')
+    ) {
+      continue;
+    }
+    let emoji = '👉';
+    if (line.includes('*') || lower.includes('composer') || lower.includes('dial')) {
+      emoji = '📞';
+    } else if (lower.includes('choisir') || lower.includes('select') || lower.includes('appuyer')) {
+      emoji = '👆';
+    } else if (lower.includes('attente') || lower.includes('pending')) {
+      emoji = '⏳';
+    } else if (
+      lower.includes('confirmer') ||
+      lower.includes('confirm') ||
+      lower.includes('pin') ||
+      lower.includes('code')
+    ) {
+      emoji = '🔐';
+    }
+    steps.push({ number: count++, emoji, text: line });
+  }
+  return steps;
+}
+
+function extractUssdCode(text?: string | null): string | null {
+  if (!text) return null;
+  const match = text.match(/\*[0-9]+#/);
+  return match ? match[0] : null;
+}
+
+function renderHighlightedText(text: string) {
+  const parts = text.split(/(\*[0-9]+#|8 Online|Online payment|Paiement en attente|eCommerce|confirmer le paiement|confirm the payment)/gi);
+  return parts.map((part, i) => {
+    const isKeyword = /(\*[0-9]+#|8 Online|Online payment|Paiement en attente|eCommerce|confirmer le paiement|confirm the payment)/gi.test(part);
+    if (isKeyword) {
+      return (
+        <span key={i} style={{ color: '#FCD34D', fontWeight: 700 }}>
+          {part}
+        </span>
+      );
+    }
+    return part;
+  });
+}
+
 export default function PaymentPage() {
   const router = useRouter();
   const { waiterId, amount: amountQ, currency: currencyQ, message: messageQ } = router.query;
@@ -176,33 +237,73 @@ export default function PaymentPage() {
         <div style={s.body}>
           {step === 'awaiting' ? (
             <div style={s.awaitingWrap}>
-              <div style={s.phoneCircle}>
-                <span style={{ fontSize: 36 }}>📱</span>
+              {/* Action Banner */}
+              <div style={s.actionBadge}>
+                <span style={s.actionBadgeText}>⚡ ACTION REQUISE SUR VOTRE TÉLÉPHONE</span>
               </div>
-              <h2 style={s.awaitingTitle}>Check your phone! 📱</h2>
-              <p style={s.awaitingDesc}>
-                A payment request was sent to your mobile money account.
+              <p style={s.actionSubtitle}>
+                Suivez ces étapes pour valider et confirmer votre pourboire :
               </p>
 
-              {apiMessage && (() => {
-                // Strip HTML tags (e.g. <br>, <br/>) and split into clean lines
-                const cleanMsg = apiMessage
-                  .replace(/<br\s*\/?>/gi, '\n')   // <br> → newline
-                  .replace(/<[^>]+>/g, '')           // strip any other HTML tags
-                  .replace(/\r\n/g, '\n')            // normalize Windows newlines
-                  .replace(/\r/g, '\n');             // normalize old Mac newlines
-                const lines = cleanMsg.split('\n').map(l => l.trim()).filter(Boolean);
+              {/* 1-Tap USSD Call Button */}
+              {(() => {
+                const ussd = extractUssdCode(apiMessage);
+                if (!ussd) return null;
+                const encoded = encodeURIComponent(ussd);
                 return (
-                  <div style={s.stepsCard}>
-                    {lines.map((line, i) => (
-                      <p key={i} style={s.stepLine}>{line}</p>
+                  <a
+                    href={`tel:${encoded}`}
+                    style={s.ussdBtn}
+                    onClick={() => {
+                      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+                        navigator.clipboard.writeText(ussd).catch(() => {});
+                      }
+                    }}
+                  >
+                    <span style={{ fontSize: 18 }}>📞</span>
+                    <span>Composer {ussd}</span>
+                  </a>
+                );
+              })()}
+
+              {/* Step cards */}
+              {(() => {
+                const steps = parseAfriPaySteps(apiMessage);
+                if (steps.length === 0) {
+                  return (
+                    <div style={s.fallbackCard}>
+                      <span style={{ fontSize: 26, marginBottom: 8, display: 'block' }}>📱</span>
+                      <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: '#fff' }}>
+                        Veuillez valider le paiement sur votre téléphone
+                      </p>
+                      <p style={{ margin: '6px 0 0', fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>
+                        Confirmez la transaction avec votre code PIN secret.
+                      </p>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div style={s.stepsList}>
+                    {steps.map((st) => (
+                      <div key={st.number} style={s.stepItem}>
+                        <div style={s.stepBadge}>{st.number}</div>
+                        <div style={s.stepEmoji}>{st.emoji}</div>
+                        <div style={s.stepText}>
+                          {renderHighlightedText(st.text)}
+                        </div>
+                      </div>
                     ))}
                   </div>
                 );
               })()}
 
-              <div style={s.spinner} />
-              <p style={s.waitingText}>Waiting for confirmation...</p>
+              {/* Loading & Status */}
+              <div style={s.awaitingStatusRow}>
+                <div style={s.spinnerMini} />
+                <span style={s.awaitingStatusText}>En attente de confirmation...</span>
+              </div>
+
               <button
                 onClick={() => {
                   if (pollRef.current) clearInterval(pollRef.current);
@@ -210,7 +311,7 @@ export default function PaymentPage() {
                 }}
                 style={s.cancelBtnRed}
               >
-                Cancel payment
+                Annuler le paiement
               </button>
             </div>
           ) : step === 'failed' ? (
@@ -264,7 +365,7 @@ export default function PaymentPage() {
               </div>
               <p style={s.feeNote}>
                 Recipient receives: <strong>{waiterReceives.toLocaleString()} {currency}</strong>
-                <span style={{ color: '#aaa', fontSize: 12 }}> (after 10% fees)</span>
+                <span style={{ color: '#aaa', fontSize: 12 }}> (after 5% fees)</span>
               </p>
 
               {/* Payment methods */}
@@ -419,6 +520,120 @@ const s: Record<string, React.CSSProperties> = {
     color: '#fff',
     boxShadow: '0 8px 32px rgba(0,0,0,0.24)',
     margin: '12px 0',
+  },
+    actionBadge: {
+    background: 'rgba(252, 211, 77, 0.15)',
+    border: '1px solid rgba(252, 211, 77, 0.35)',
+    borderRadius: 999,
+    padding: '6px 14px',
+    marginBottom: 10,
+    display: 'inline-flex',
+    alignItems: 'center',
+  },
+  actionBadgeText: {
+    fontSize: 12,
+    fontWeight: 800,
+    color: '#FCD34D',
+    letterSpacing: 0.6,
+  },
+  actionSubtitle: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.8)',
+    textAlign: 'center',
+    lineHeight: 1.5,
+    margin: '0 0 16px',
+    maxWidth: 320,
+  },
+  ussdBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    width: '100%',
+    padding: '12px 20px',
+    borderRadius: 14,
+    background: '#7B5FEE',
+    color: '#FFFFFF',
+    textDecoration: 'none',
+    fontWeight: 700,
+    fontSize: 15,
+    marginBottom: 16,
+    boxShadow: '0 4px 16px rgba(123, 95, 238, 0.4)',
+    boxSizing: 'border-box',
+    cursor: 'pointer',
+  },
+  stepsList: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 10,
+    marginBottom: 16,
+  },
+  stepItem: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 12,
+    background: 'rgba(255, 255, 255, 0.06)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    borderRadius: 14,
+    padding: '12px 14px',
+    boxSizing: 'border-box',
+  },
+  stepBadge: {
+    width: 24,
+    height: 24,
+    borderRadius: '50%',
+    background: '#7B5FEE',
+    color: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 12,
+    fontWeight: 800,
+    flexShrink: 0,
+    marginTop: 2,
+  },
+  stepEmoji: {
+    fontSize: 18,
+    flexShrink: 0,
+    lineHeight: 1.3,
+  },
+  stepText: {
+    flex: 1,
+    fontSize: 13,
+    color: '#F1F0F8',
+    lineHeight: 1.55,
+  },
+  fallbackCard: {
+    width: '100%',
+    background: 'rgba(123, 95, 238, 0.15)',
+    border: '1px solid rgba(123, 95, 238, 0.35)',
+    borderRadius: 16,
+    padding: '20px',
+    textAlign: 'center',
+    marginBottom: 16,
+    boxSizing: 'border-box',
+  },
+  awaitingStatusRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: 10,
+    marginBottom: 16,
+  },
+  spinnerMini: {
+    width: 20,
+    height: 20,
+    border: '2.5px solid rgba(255, 255, 255, 0.2)',
+    borderTop: '2.5px solid #7B5FEE',
+    borderRadius: '50%',
+    animation: 'spin 0.8s linear infinite',
+    flexShrink: 0,
+  },
+  awaitingStatusText: {
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontWeight: 500,
   },
   phoneCircle: {
     width: 72,

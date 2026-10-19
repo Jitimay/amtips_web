@@ -24,9 +24,9 @@ export default function Terms() {
           <h2 style={s.h2}>4. Payments and fees</h2>
           <p style={s.p}>Tips are processed through AfriPay. The following fees apply:</p>
           <ul style={s.ul}>
-            <li>AfriPay gateway fee: 4% of the tip amount (charged to the customer)</li>
-            <li>amTips platform fee: 6% of the tip amount</li>
-            <li>Total deduction: 10% — the service worker receives 90% of the tip</li>
+            <li>AfriPay gateway fee: 4% of the tip amount</li>
+            <li>amTips platform fee: 1% of the tip amount</li>
+            <li>Total deduction: 5% — the service worker receives 95% of the tip</li>
           </ul>
           <p style={s.p}>LumiCash may apply their own withdrawal fee (3%) when funds are transferred to your mobile money account. This fee is between you and LumiCash and is not collected by amTips.</p>
 

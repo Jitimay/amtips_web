@@ -252,7 +252,7 @@ export default function SuccessPage() {
                 </span>
               </div>
               <div style={s.receiptRow}>
-                <span style={s.receiptLabel}>Gateway fee (10%)</span>
+                <span style={s.receiptLabel}>Service fee (5%)</span>
                 <span style={s.receiptLabelSub}>
                   {(info.customer_pays - info.tip_amount).toLocaleString()} {info.currency}
                 </span>
