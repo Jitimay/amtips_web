@@ -365,7 +365,6 @@ export default function PaymentPage() {
               </div>
               <p style={s.feeNote}>
                 Recipient receives: <strong>{waiterReceives.toLocaleString()} {currency}</strong>
-                <span style={{ color: '#aaa', fontSize: 12 }}> (after 5% fees)</span>
               </p>
 
               {/* Payment methods */}
