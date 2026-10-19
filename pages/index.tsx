@@ -128,14 +128,17 @@ export default function Home() {
           </div>
           <div className="feat-grid">
             {[
-              { icon: '📲', title: 'QR Code & Link', desc: 'Share your personal QR code or link. Customers tip in seconds — no app required.' },
-              { icon: '💰', title: 'Instant Wallet', desc: 'All tips land in your amTips wallet. Track your full earnings history in one place.' },
-              { icon: '📤', title: 'Easy Withdrawals', desc: 'Cash out to your mobile money account anytime, directly from the app.' },
-              { icon: '📊', title: 'Analytics', desc: 'See your earnings, ratings, and performance over time with a clear dashboard.' },
-              { icon: '🎯', title: 'Campaigns', desc: 'Create tipping campaigns for special events, goals, or promotions.' },
-              { icon: '🔔', title: 'Instant Notifications', desc: 'Get notified the moment a tip arrives so you never miss a payment.' },
+              { icon: '📲', title: 'QR Code & Link', desc: 'Share your personal QR code or link. Customers tip in seconds — no app required.', img: '/1.jpg' },
+              { icon: '💰', title: 'Instant Wallet', desc: 'All tips land in your amTips wallet. Track your full earnings history in one place.', img: '/3.jpg' },
+              { icon: '📤', title: 'Easy Withdrawals', desc: 'Cash out to your mobile money account anytime, directly from the app.', img: '/4.jpg' },
+              { icon: '📊', title: 'Analytics', desc: 'See your earnings, ratings, and performance over time with a clear dashboard.', img: '/1.jpg' },
+              { icon: '🎯', title: 'Campaigns', desc: 'Create tipping campaigns for special events, goals, or promotions.', img: '/2.jpg' },
+              { icon: '🔔', title: 'Instant Notifications', desc: 'Get notified the moment a tip arrives so you never miss a payment.', img: '/4.jpg' },
             ].map(f => (
               <div className="feat-card" key={f.title}>
+                <div className="feat-img-wrap">
+                  <img src={f.img} alt={f.title} className="feat-img" />
+                </div>
                 <span className="feat-icon">{f.icon}</span>
                 <h3 className="feat-title">{f.title}</h3>
                 <p className="feat-desc">{f.desc}</p>
@@ -334,11 +337,13 @@ export default function Home() {
 
         /* FEATURES */
         .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .feat-card { background: var(--gray); border-radius: var(--radius); padding: 28px; transition: transform 0.2s; }
+        .feat-card { background: var(--gray); border-radius: var(--radius); overflow: hidden; transition: transform 0.2s; }
         .feat-card:hover { transform: translateY(-3px); }
-        .feat-icon { font-size: 28px; display: block; margin-bottom: 14px; line-height: 1; }
-        .feat-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--dark); }
-        .feat-desc { font-size: 14px; color: var(--text2); line-height: 1.65; }
+        .feat-img-wrap { width: 100%; height: 160px; overflow: hidden; }
+        .feat-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .feat-icon { font-size: 24px; display: block; margin: 16px 20px 6px; line-height: 1; }
+        .feat-title { font-size: 15px; font-weight: 700; margin: 0 20px 6px; color: var(--dark); }
+        .feat-desc { font-size: 13px; color: var(--text2); line-height: 1.65; margin: 0 20px 20px; }
 
         /* HOW */
         .how-section { background: #fff; }
