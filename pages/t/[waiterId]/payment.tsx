@@ -4,7 +4,7 @@ import Head from 'next/head';
 
 const PRIMARY = '#7B5FEE';
 const GATEWAY_FEE = 0.04;
-const PLATFORM_FEE = 0.06;
+const PLATFORM_FEE = 0.01;
 
 type Method = {
   id: string;
@@ -28,6 +28,7 @@ export default function PaymentPage() {
   const [methods, setMethods] = useState<Method[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [requiresOtp, setRequiresOtp] = useState(false);
+  const [dialCode, setDialCode] = useState('257');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [requestingOtp, setRequestingOtp] = useState(false);
@@ -92,7 +93,7 @@ export default function PaymentPage() {
     const res = await fetch('/api/request-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone, paymentMethod: selectedId }),
+      body: JSON.stringify({ phone: dialCode + phone, paymentMethod: selectedId }),
     });
     const data = await res.json();
     setRequestingOtp(false);
@@ -127,7 +128,7 @@ export default function PaymentPage() {
         waiterId,
         amount,
         currency,
-        phone,
+        phone: dialCode + phone,
         paymentMethod: selectedId,
         otp: requiresOtp ? otp : undefined,
         message,
@@ -301,13 +302,31 @@ export default function PaymentPage() {
 
               {/* Phone */}
               <p style={s.sectionLabel}>Your mobile money number</p>
-              <input
-                type="tel"
-                placeholder="e.g. 25761234567"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                style={s.input}
-              />
+              <div style={{ display: 'flex', gap: 8 }}>
+                <select
+                  value={dialCode}
+                  onChange={(e) => setDialCode(e.target.value)}
+                  style={{ ...s.input, width: 'auto', paddingRight: 8, flexShrink: 0 }}
+                >
+                  {[
+                    { flag: '🇧🇮', code: '257', label: '+257' },
+                    { flag: '🇷🇼', code: '250', label: '+250' },
+                    { flag: '🇨🇩', code: '243', label: '+243' },
+                    { flag: '🇹🇿', code: '255', label: '+255' },
+                    { flag: '🇰🇪', code: '254', label: '+254' },
+                    { flag: '🇺🇬', code: '256', label: '+256' },
+                  ].map(({ flag, code, label }) => (
+                    <option key={code} value={code}>{flag} {label}</option>
+                  ))}
+                </select>
+                <input
+                  type="tel"
+                  placeholder="61 234 567"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                  style={{ ...s.input, flex: 1 }}
+                />
+              </div>
 
               {/* OTP */}
               {requiresOtp && (

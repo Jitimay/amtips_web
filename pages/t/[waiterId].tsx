@@ -11,7 +11,7 @@ const supabase = createClient(
 
 const PRESETS = [2000, 5000, 10000, 20000];
 const GATEWAY_FEE = 0.04;
-const PLATFORM_FEE = 0.06;
+const PLATFORM_FEE = 0.01;
 
 type Profile = {
   id: string;
@@ -207,7 +207,6 @@ export default function TipPage({
             <p style={s.fee}>
               {firstName} receives:{' '}
               <strong>{waiterReceives.toLocaleString()} BIF</strong>
-              <span style={{ color: '#aaa', fontSize: 12 }}> (after 10% fees)</span>
             </p>
           )}
 

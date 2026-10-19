@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 const PROXY_URL = 'https://ygtgfqitctowlhkqomjw.supabase.co/functions/v1/afripay-proxy';
 const CALLBACK_URL = 'https://ygtgfqitctowlhkqomjw.supabase.co/functions/v1/afripay-callback';
 const GATEWAY_FEE = 0.04;
-const PLATFORM_FEE = 0.06;
+const PLATFORM_FEE = 0.01;
 
 // Basic in-memory rate limiter (per instance)
 const rateLimit = new Map<string, { count: number; expiresAt: number }>();
