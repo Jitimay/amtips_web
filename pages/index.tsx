@@ -253,7 +253,8 @@ export default function Home() {
                 <a href="/delete-account" className="footer-link">Delete Account</a>
               </div>
               <div className="footer-col">
-                <div className="footer-col-title">Contact</div>
+                <div className="footer-col-title">Contact & Support</div>
+                <a href="/support" className="footer-link">AI Help Assistant</a>
                 <a href="mailto:support@amtips.app" className="footer-link">support@amtips.app</a>
               </div>
             </div>
