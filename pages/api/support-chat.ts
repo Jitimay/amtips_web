@@ -68,34 +68,53 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   ];
 
   try {
-    const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${GROQ_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
-        messages,
-        temperature: 0.2, // Low temperature for high accuracy & zero hallucinations
-        max_tokens: 600,
-      }),
-    });
+    const candidateModels = [
+      process.env.GROQ_MODEL,
+      'openai/gpt-oss-120b',
+      'openai/gpt-oss-20b',
+      'qwen/qwen3.8-27b',
+    ].filter(Boolean) as string[];
 
-    const data = await groqResponse.json();
+    let lastError: any = null;
+    let reply = '';
+    let usedModel = '';
 
-    if (!groqResponse.ok) {
-      console.error('Groq API Error Response:', data);
-      return res.status(groqResponse.status).json({
-        error: data.error?.message || 'Error communicating with Groq API.',
-      });
+    for (const modelToTry of candidateModels) {
+      try {
+        const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${GROQ_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: modelToTry,
+            messages,
+            temperature: 0.2,
+            max_tokens: 600,
+          }),
+        });
+
+        const data = await groqResponse.json();
+        if (groqResponse.ok && data.choices?.[0]?.message?.content) {
+          reply = data.choices[0].message.content.trim();
+          usedModel = data.model || modelToTry;
+          break;
+        } else {
+          lastError = data.error?.message || `Model ${modelToTry} failed`;
+        }
+      } catch (err: any) {
+        lastError = err?.message;
+      }
     }
 
-    const reply = data.choices?.[0]?.message?.content?.trim() || '';
+    if (!reply) {
+      return res.status(500).json({ error: lastError || 'All models failed.' });
+    }
 
     return res.status(200).json({
       reply,
-      model: data.model || 'llama-3.1-8b-instant',
+      model: usedModel,
     });
   } catch (error: any) {
     console.error('Support Chat Server Error:', error);
