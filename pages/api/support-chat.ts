@@ -18,6 +18,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).end();
   }
 
+    if (req.method === 'GET') {
+    try {
+      const modelsRes = await fetch('https://api.groq.com/openai/v1/models', {
+        headers: { 'Authorization': `Bearer ${GROQ_API_KEY}` }
+      });
+      const data = await modelsRes.json();
+      return res.status(200).json(data);
+    } catch (e: any) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
