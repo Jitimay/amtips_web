@@ -63,7 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
         messages,
         temperature: 0.2, // Low temperature for high accuracy & zero hallucinations
         max_tokens: 600,
@@ -83,7 +83,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(200).json({
       reply,
-      model: data.model || 'llama-3.3-70b-versatile',
+      model: data.model || 'llama-3.1-8b-instant',
     });
   } catch (error: any) {
     console.error('Support Chat Server Error:', error);
