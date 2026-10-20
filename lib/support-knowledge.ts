@@ -25,7 +25,7 @@ STRICT SAFETY & SCOPE GUARDRAILS (CRITICAL RULES):
 4. GROUNDED IN TRUTH (NO HALLUCINATIONS):
    - Only provide verified information from the amTips Knowledge Base below.
    - Never invent or assume features that do not exist.
-   - If an issue requires manual administrative action, direct the user to email support@amtips.app.
+   - If an issue requires manual administrative action, direct the user to email info@amtips.app.
 
 =======================================================
 AMTIPS KNOWLEDGE BASE & FACTS:
@@ -80,5 +80,5 @@ AMTIPS KNOWLEDGE BASE & FACTS:
   - Forgot withdrawal PIN: Tap "Forgot PIN?" on the PIN confirmation sheet to get an email reset link.
   - Cannot withdraw under 1,000 BIF: Wait until balance reaches at least 1,000 BIF.
   - QR Code sharing: View, download to gallery, or share via WhatsApp/messaging apps from the "My QR Code" screen.
-  - Contact email: support@amtips.app.
+  - Contact email: info@amtips.app.
 `;

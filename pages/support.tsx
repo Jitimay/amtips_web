@@ -61,7 +61,7 @@ export default function SupportPage() {
           ...prev,
           {
             role: 'assistant',
-            content: data.error || 'Désolé, une erreur est survenue. Veuillez réessayer plus tard ou contacter support@amtips.app.',
+            content: data.error || 'Désolé, une erreur est survenue. Veuillez réessayer plus tard ou contacter info@amtips.app.',
           },
         ]);
       } else {
@@ -75,7 +75,7 @@ export default function SupportPage() {
         ...prev,
         {
           role: 'assistant',
-          content: 'Impossible de joindre le serveur. Vérifiez votre connexion internet ou écrivez à support@amtips.app.',
+          content: 'Impossible de joindre le serveur. Vérifiez votre connexion internet ou écrivez à info@amtips.app.',
         },
       ]);
     } finally {
@@ -189,8 +189,8 @@ export default function SupportPage() {
         <footer style={styles.footer}>
           <p style={{ margin: '0 0 8px', fontSize: 13, color: '#777' }}>
             Des questions urgentes ? Contactez-nous à{' '}
-            <a href="mailto:support@amtips.app" style={{ color: PRIMARY, textDecoration: 'none', fontWeight: 600 }}>
-              support@amtips.app
+            <a href="mailto:info@amtips.app" style={{ color: PRIMARY, textDecoration: 'none', fontWeight: 600 }}>
+              info@amtips.app
             </a>
           </p>
           <div style={{ display: 'flex', gap: 16, justifyContent: 'center', fontSize: 12, color: '#999' }}>

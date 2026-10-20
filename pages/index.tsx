@@ -234,7 +234,7 @@ export default function Home() {
               <div className="footer-col">
                 <div className="footer-col-title">Support</div>
                 <a href="/support" className="footer-link">AI Help Assistant</a>
-                <a href="mailto:support@amtips.app" className="footer-link">support@amtips.app</a>
+                <a href="mailto:info@amtips.app" className="footer-link">info@amtips.app</a>
               </div>
             </div>
           </div>
