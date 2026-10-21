@@ -9,7 +9,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-const PRESETS = [2000, 5000, 10000, 20000];
+const PRESETS = [5000, 10000, 20000, 50000];
 const GATEWAY_FEE = 0.04;
 const PLATFORM_FEE = 0.01;
 
@@ -187,7 +187,7 @@ export default function TipPage({
 
           <input
             type="number"
-            placeholder="Custom amount"
+            placeholder="Enter a custom amount (BIF)..."
             value={custom}
             onChange={(e) => { setCustom(e.target.value); setAmount(null); }}
             style={s.input}
