@@ -193,6 +193,7 @@ export default function PaymentPage() {
         paymentMethod: selectedId,
         otp: requiresOtp ? otp : undefined,
         message,
+        campaignId: router.query.campaign ? String(router.query.campaign) : undefined,
       }),
     });
     const data = await res.json();

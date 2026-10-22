@@ -47,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
-  const { waiterId, amount, currency = 'BIF', phone, paymentMethod, otp, message } = req.body;
+  const { waiterId, amount, currency = 'BIF', phone, paymentMethod, otp, message, campaignId } = req.body;
 
   if (!waiterId || !amount || amount < 100 || !phone || !paymentMethod) {
     return res.status(400).json({ status: 'error', message: 'Invalid parameters.' });
@@ -67,6 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       status: 'pending',
       is_anonymous: true,
       ...(message && typeof message === 'string' && message.trim() ? { message: message.trim() } : {}),
+      ...(campaignId ? { campaign_id: campaignId } : {}),
     })
     .select('id')
     .single();

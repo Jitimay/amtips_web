@@ -67,7 +67,7 @@ export default function TipPage({
     if (!tipAmount || tipAmount < 100) return;
     router.push({
       pathname: `/t/${profile!.id}/payment`,
-      query: { amount: tipAmount, currency: 'BIF', ...(note.trim() ? { message: note.trim() } : {}) },
+      query: { amount: tipAmount, currency: 'BIF', ...(note.trim() ? { message: note.trim() } : {}), ...(campaign?.id ? { campaign: campaign.id } : {}) },
     });
   }
 
