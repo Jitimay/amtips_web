@@ -146,25 +146,24 @@ export default function TipPage({
               {campaign.description && (
                 <p style={s.campaignDesc}>{campaign.description}</p>
               )}
-              {campaign.target_amount && (
-                <>
-                  <div style={s.progressBg}>
-                    <div
-                      style={{
-                        ...s.progressFill,
-                        width: `${Math.min(
-                          100,
-                          (campaign.current_amount / campaign.target_amount) * 100
-                        )}%`,
-                      }}
-                    />
-                  </div>
-                  <p style={s.campaignStats}>
-                    {campaign.current_amount.toLocaleString()} BIF raised ·{' '}
-                    {campaign.tips_count} tips
-                  </p>
-                </>
-              )}
+              <div style={s.progressBg}>
+                <div
+                  style={{
+                    ...s.progressFill,
+                    width: campaign.target_amount && campaign.target_amount > 0
+                      ? `${Math.min(100, (campaign.current_amount / campaign.target_amount) * 100)}%`
+                      : '100%',
+                    opacity: campaign.target_amount && campaign.target_amount > 0 ? 1 : 0.35,
+                  }}
+                />
+              </div>
+              <p style={s.campaignStats}>
+                {campaign.current_amount.toLocaleString()} BIF raised ·{' '}
+                {campaign.tips_count} tips
+                {campaign.target_amount && campaign.target_amount > 0 && (
+                  <> · Goal: {campaign.target_amount.toLocaleString()} BIF</>
+                )}
+              </p>
             </div>
           )}
 
