@@ -71,8 +71,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const candidateModels = [
       process.env.GROQ_MODEL,
       'llama-3.3-70b-versatile',   // best quality, 128k context
+      'llama-3.1-70b-versatile',   // fallback
       'llama-3.1-8b-instant',       // fast fallback
-      'gemma2-9b-it',               // last resort
+      'llama3-8b-8192',             // last resort
     ].filter(Boolean) as string[];
 
     let lastError: any = null;
