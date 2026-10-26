@@ -50,7 +50,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (e1) console.error('[username page] exact query error:', e1.message);
 
     if (exact?.id) {
-      return { redirect: { destination: `/t/${exact.id}`, permanent: false } };
+      const campaignParam = context.query?.campaign ? `?campaign=${context.query.campaign}` : '';
+      return { redirect: { destination: `/t/${exact.id}${campaignParam}`, permanent: false } };
     }
 
     // 2. Fallback: startsWith match (handles truncated usernames like @brucethede…)
@@ -65,8 +66,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (e2) console.error('[username page] partial query error:', e2.message);
 
     if (partialMatches && partialMatches.length === 1 && partialMatches[0].id) {
+      const campaignParam = context.query?.campaign ? `?campaign=${context.query.campaign}` : '';
       return {
-        redirect: { destination: `/t/${partialMatches[0].id}`, permanent: false },
+        redirect: { destination: `/t/${partialMatches[0].id}${campaignParam}`, permanent: false },
       };
     }
   } catch (err) {
