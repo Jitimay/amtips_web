@@ -70,9 +70,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const candidateModels = [
       process.env.GROQ_MODEL,
-      'openai/gpt-oss-120b',
-      'openai/gpt-oss-20b',
-      'qwen/qwen3.8-27b',
+      'llama-3.3-70b-versatile',   // best quality, 128k context
+      'llama-3.1-8b-instant',       // fast fallback
+      'gemma2-9b-it',               // last resort
     ].filter(Boolean) as string[];
 
     let lastError: any = null;
