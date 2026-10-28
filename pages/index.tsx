@@ -338,23 +338,23 @@ export default function Home() {
         .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
 
         /* phone frame */
-        .hero-visual { flex: 1 1 260px; display: flex; justify-content: center; position: relative; z-index: 1; }
+        .hero-visual { flex: 1 1 300px; display: flex; justify-content: center; align-items: center; position: relative; z-index: 1; }
         .phone-frame {
-          width: 240px; background: var(--dark); border-radius: 36px;
-          padding: 14px 10px; border: 3px solid rgba(255,255,255,0.12);
-          box-shadow: 0 40px 80px rgba(79,82,255,0.18), 0 0 0 1px rgba(0,0,0,0.08);
+          width: 320px;
+          background: transparent;
+          border-radius: 0;
+          padding: 0;
+          border: none;
+          box-shadow: none;
           position: relative;
         }
-        .phone-notch {
-          width: 60px; height: 10px; background: rgba(255,255,255,0.08);
-          border-radius: 10px; margin: 0 auto 10px;
-        }
-        .phone-img { width: 100%; border-radius: 22px; display: block; }
+        .phone-notch { display: none; }
+        .phone-img { width: 100%; border-radius: 28px; display: block; filter: drop-shadow(0 32px 64px rgba(108,78,232,0.35)); }
         .phone-glow {
-          position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%);
-          width: 200px; height: 60px;
-          background: radial-gradient(ellipse, rgba(79,82,255,0.3) 0%, transparent 70%);
-          filter: blur(16px);
+          position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
+          width: 260px; height: 80px;
+          background: radial-gradient(ellipse, rgba(108,78,232,0.35) 0%, transparent 70%);
+          filter: blur(20px);
         }
 
         /* ── BUTTONS ── */
