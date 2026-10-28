@@ -301,9 +301,10 @@ export default function Home() {
         /* ── HERO ── */
         .hero {
           display: flex; align-items: center; justify-content: space-between;
-          gap: 60px; padding: 100px 64px 80px;
-          max-width: 1200px; margin: 0 auto;
+          gap: 60px; padding: 80px 64px 0;
+          max-width: 1280px; margin: 0 auto;
           position: relative;
+          min-height: 700px;
         }
         .hero-bg-glow {
           position: absolute; top: 10%; right: 5%; width: 600px; height: 600px;
@@ -338,9 +339,10 @@ export default function Home() {
         .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
 
         /* phone frame */
-        .hero-visual { flex: 1 1 300px; display: flex; justify-content: center; align-items: center; position: relative; z-index: 1; }
+        .hero-visual { flex: 1 1 460px; display: flex; justify-content: center; align-items: flex-end; position: relative; z-index: 1; }
         .phone-frame {
-          width: 320px;
+          width: 100%;
+          max-width: 500px;
           background: transparent;
           border-radius: 0;
           padding: 0;
@@ -349,12 +351,13 @@ export default function Home() {
           position: relative;
         }
         .phone-notch { display: none; }
-        .phone-img { width: 100%; border-radius: 28px; display: block; filter: drop-shadow(0 32px 64px rgba(108,78,232,0.35)); }
+        .phone-img { width: 100%; height: auto; display: block; filter: drop-shadow(0 40px 80px rgba(108,78,232,0.40)); }
         .phone-glow {
           position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
-          width: 260px; height: 80px;
+          width: 80%; height: 80px;
           background: radial-gradient(ellipse, rgba(108,78,232,0.35) 0%, transparent 70%);
-          filter: blur(20px);
+          filter: blur(24px);
+          pointer-events: none;
         }
 
         /* ── BUTTONS ── */
