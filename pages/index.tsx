@@ -77,7 +77,7 @@ export default function Home() {
           <div className="hero-visual">
             <div className="phone-frame">
               <div className="phone-notch" />
-              <img src="/1.jpg" alt="amTips app screenshot" className="phone-img" />
+              <img src="/amtips-web.png" alt="amTips app screenshot" className="phone-img" />
             </div>
             <div className="phone-glow" />
           </div>
