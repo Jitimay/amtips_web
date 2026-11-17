@@ -11,7 +11,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
         namespace: 'android_app',
         package_name: 'app.amtips.official',
         sha256_cert_fingerprints: [
-          'B0:3F:CA:3D:6C:08:8D:3B:DD:EA:B6:D3:EC:69:69:38:E1:68:06:8B:04:29:2D:3C:0F:99:55:6F:3D:55:31:C1',
+          'F9:3B:EB:15:EB:A9:36:19:37:24:F6:FD:DE:36:B0:A2:09:8F:84:E1:EF:AA:D7:5B:36:21:8A:40:E5:CE:32:2D',
         ],
       },
     },
